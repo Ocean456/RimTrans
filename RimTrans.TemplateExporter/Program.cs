@@ -33,7 +33,7 @@ namespace RimTrans.TemplateExporter {
             }
             Log.WriteLine();
             Log.Write("Press any key to exit...");
-            Console.ReadKey();
+            // Console.ReadKey();
             return;
         }
 

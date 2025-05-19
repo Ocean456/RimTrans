@@ -144,7 +144,7 @@ namespace RimTrans.Trans
                 Log.WriteLine(ConsoleColor.Red, $"Project File {projectFile} NO FOUND.");
                 Log.WriteLine();
                 Console.Write("Press any key to exit...");
-                Console.ReadKey();
+                // Console.ReadKey();
                 return;
             }
 
@@ -155,7 +155,7 @@ namespace RimTrans.Trans
                 Log.WriteLine(ConsoleColor.Red, $"DLL {dllPath} NO FOUND.");
                 Log.WriteLine();
                 Console.Write("Press any key to exit...");
-                Console.ReadKey();
+                // Console.ReadKey();
                 return;
             }
             TypeLoader.Init(dllPath);
@@ -177,7 +177,7 @@ namespace RimTrans.Trans
                 Log.WriteLine(ConsoleColor.Red, $"Mod Directory {context.ModPath} NO FOUND.");
                 Log.WriteLine();
                 Console.Write("Press any key to exit...");
-                Console.ReadKey();
+                // Console.ReadKey();
                 return;
             }
 
@@ -272,7 +272,7 @@ namespace RimTrans.Trans
             Log.WriteLine(ConsoleColor.Green, $"======== Completed Project  {FaceGood()}========");
             Log.WriteLine();
             Console.Write("Press any key to exit...");
-            Console.ReadKey();
+            // Console.ReadKey();
             return;
         }
 
@@ -280,7 +280,7 @@ namespace RimTrans.Trans
         {
             var loadFoldersPath = Path.Combine(modPath, "LoadFolders.xml");
             var dirNames = new[] {
-                "", "Common", "1.0", "1.1", "1.2", "1.3", "1.4"
+                "", "Common", "1.0", "1.1", "1.2", "1.3", "1.4", "1.5"
             };
             if (File.Exists(loadFoldersPath))
             {
