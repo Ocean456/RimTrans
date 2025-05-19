@@ -97,7 +97,7 @@ namespace RimTrans.Trans
             string copyright = asm.GetCustomAttribute<AssemblyCopyrightAttribute>().Copyright;
 
             Console.Title = title;
-            Console.OutputEncoding = Encoding.Unicode;
+            Console.OutputEncoding = Encoding.UTF8;
             Log.WriteLine();
             Log.WriteLine(ConsoleColor.Cyan, $" {FaceGood()}{FaceGood()}{FaceGood()}");
             Log.WriteLine();
