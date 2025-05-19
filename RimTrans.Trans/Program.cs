@@ -272,7 +272,7 @@ namespace RimTrans.Trans
             Log.WriteLine(ConsoleColor.Green, $"======== Completed Project  {FaceGood()}========");
             Log.WriteLine();
             Console.Write("Press any key to exit...");
-            // Console.ReadKey();
+            Console.Read();
             return;
         }
 

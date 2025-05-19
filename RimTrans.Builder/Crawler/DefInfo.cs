@@ -83,8 +83,8 @@ namespace RimTrans.Builder.Crawler {
             }
 
             if (this.defType == null) {
-                Log.Error();
-                Log.WriteLine($"ERROR: defType '{defTypeName}' no found.");
+                // Log.Error();
+                // Log.WriteLine($"ERROR: defType '{defTypeName}' no found.");
                 this.isValid = false;
                 //Log.WriteLine(def.ToString());
                 return;

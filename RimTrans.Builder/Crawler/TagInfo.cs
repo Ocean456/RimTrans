@@ -324,8 +324,8 @@ namespace RimTrans.Builder.Crawler {
                     TagInfo refValue = new TagInfo(this, fieldInfoArray[1]);
                     this.allTags.Add("refValue", refValue);
                 } else {
-                    Log.Error();
-                    Log.WriteLine($"The fields amount of the ref item '{item.Name.ToString()}' is not 2.");
+                    // Log.Error();
+                    // Log.WriteLine($"The fields amount of the ref item '{item.Name.ToString()}' is not 2.");
                 }
             }
         }
@@ -567,8 +567,8 @@ namespace RimTrans.Builder.Crawler {
                         Log.WriteLine($"Tag '{this.tagName}' has both type of itme.");
                     }
                 } else {
-                    Log.Error();
-                    Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
+                    // Log.Error();
+                    // Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
                 }
             } else if (genericArgumentsArray.Count() == 2) {
                 if (generticTypeName == "Dictionary") {
@@ -583,13 +583,13 @@ namespace RimTrans.Builder.Crawler {
                         Type valueType = genericArgumentsArray[1];
                         this.allTags.Add("li", new TagInfo(this, keyElement, keyType, valueElement, valueType));
                     } else {
-                        Log.Error();
-                        Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
+                        // Log.Error();
+                        // Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
                     }
 
                 } else {
-                    Log.Error();
-                    Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
+                    // Log.Error();
+                    // Log.WriteLine($"Tag '{this.tagName}' is unkown generic type: {this.typeName}.");
                 }
             }
         }
