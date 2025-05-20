@@ -39,30 +39,30 @@ jobs:
 
       - name: Publish framework-dependent
         run: |
-          dotnet publish ${{ env.Solution_Name }} \
-            -c Release \
-            -r win-x64 \
-            --self-contained false \
+          dotnet publish ${{ env.Solution_Name }} `
+            -c Release `
+            -r win-x64 `
+            --self-contained false `
             -o ${{ env.Output_Dir }}/framework-dependent
 
       - name: Publish self-contained
         run: |
-          dotnet publish ${{ env.Solution_Name }} \
-            -c Release \
-            -r win-x64 \
-            --self-contained true \
+          dotnet publish ${{ env.Solution_Name }} `
+            -c Release `
+            -r win-x64 `
+            --self-contained true `
             -o ${{ env.Output_Dir }}/self-contained
 
       - name: Zip framework-dependent
         run: |
-          Compress-Archive \
-            -Path ${{ env.Output_Dir }}/framework-dependent/* \
+          Compress-Archive `
+            -Path ${{ env.Output_Dir }}/framework-dependent/* `
             -DestinationPath ${{ env.Output_Dir }}/RimTrans-framework-dependent-win-x64.zip
 
       - name: Zip self-contained
         run: |
-          Compress-Archive \
-            -Path ${{ env.Output_Dir }}/self-contained/* \
+          Compress-Archive `
+            -Path ${{ env.Output_Dir }}/self-contained/* `
             -DestinationPath ${{ env.Output_Dir }}/RimTrans-self-contained-win-x64.zip
 
       # ——— Upload artifacts ———
