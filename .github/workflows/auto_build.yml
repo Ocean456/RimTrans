@@ -29,36 +29,51 @@ jobs:
         uses: microsoft/setup-msbuild@v2
 
       - name: Restore dependencies
-        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release /m
+        run: msbuild ${{ env.Solution_Name }} /t:Restore /p:Configuration=Release /m
 
       - name: Build solution (Release)
-        run: msbuild $env:Solution_Name /t:Build /p:Configuration=Release /m
+        run: msbuild ${{ env.Solution_Name }} /t:Build /p:Configuration=Release /m
 
-      - name: Run unit tests (Release)
+      - name: Run unit tests
         run: dotnet test -c Release --no-build --verbosity normal
 
+      - name: Publish framework-dependent
+        run: |
+          dotnet publish ${{ env.Solution_Name }} \
+            -c Release \
+            -r win-x64 \
+            --self-contained false \
+            -o ${{ env.Output_Dir }}/framework-dependent
+
       - name: Publish self-contained
-        run: dotnet publish RimTrans.sln -c Release -r win-x64 --self-contained true -o $env:Output_Dir/self-contained
-
-      - name: Create framework-dependent zip
         run: |
-          New-Item -ItemType Directory -Path temp/RimTrans -Force
-          Copy-Item -Path $env:Output_Dir/net6.0-windows/* -Destination temp/RimTrans -Recurse
-          Compress-Archive -Path temp/RimTrans -DestinationPath "$env:Output_Dir/RimTrans-framework-dependent.zip"
-          Remove-Item temp -Recurse -Force
+          dotnet publish ${{ env.Solution_Name }} \
+            -c Release \
+            -r win-x64 \
+            --self-contained true \
+            -o ${{ env.Output_Dir }}/self-contained
 
-      - name: Create self-contained zip
+      - name: Zip framework-dependent
         run: |
-          New-Item -ItemType Directory -Path temp/RimTrans -Force
-          Copy-Item -Path $env:Output_Dir/self-contained/* -Destination temp/RimTrans -Recurse
-          Compress-Archive -Path temp/RimTrans -DestinationPath "$env:Output_Dir/RimTrans-self-contained-win-x64.zip"
-          Remove-Item temp -Recurse -Force
+          Compress-Archive \
+            -Path ${{ env.Output_Dir }}/framework-dependent/* \
+            -DestinationPath ${{ env.Output_Dir }}/RimTrans-framework-dependent-win-x64.zip
 
-      - name: Upload artifacts
+      - name: Zip self-contained
+        run: |
+          Compress-Archive \
+            -Path ${{ env.Output_Dir }}/self-contained/* \
+            -DestinationPath ${{ env.Output_Dir }}/RimTrans-self-contained-win-x64.zip
+
+      # ——— Upload artifacts ———
+      - name: Upload framework-dependent
         uses: actions/upload-artifact@v4
         with:
-          name: RimTrans-Build-Release
-          path: |
-            ${{ env.Output_Dir }}/RimTrans-framework-dependent.zip
-            ${{ env.Output_Dir }}/RimTrans-self-contained-win-x64.zip
-          
+          name: RimTrans-framework-dependent-win-x64
+          path: ${{ env.Output_Dir }}/RimTrans-framework-dependent-win-x64.zip
+
+      - name: Upload self-contained
+        uses: actions/upload-artifact@v4
+        with:
+          name: RimTrans-self-contained-win-x64
+          path: ${{ env.Output_Dir }}/RimTrans-self-contained-win-x64.zip

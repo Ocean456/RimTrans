@@ -78,24 +78,25 @@ jobs:
             $previousTag = $tags | Where-Object { $_ -ne $env:TAG_NAME } | Select-Object -First 1
 
             if ($previousTag -match '^v?(\d+)\.(\d+)\.(\d+)\.(\d+)$') {
-              $major = [int]$matches[1]
-              $minor = [int]$matches[2]
-              $build = [int]$matches[3]
+              $major    = [int]$matches[1]
+              $minor    = [int]$matches[2]
+              $build    = [int]$matches[3]
               $revision = [int]$matches[4] + 1
-              $newVersion = "v$major.$minor.$build.$revision"
+              $newVersion = "$major.$minor.$build.$revision"
               echo "Detected previous tag: $previousTag"
               echo "Bumping revision -> $newVersion"
               echo "VERSION=$newVersion" >> $env:GITHUB_ENV
             } else {
               echo "Could not parse previous tag, using provided tag name as version"
-              echo "VERSION=$env:TAG_NAME" >> $env:GITHUB_ENV
+              $clean = $env:TAG_NAME.TrimStart('v')
+              echo "VERSION=$clean" >> $env:GITHUB_ENV
             }
           } else {
             $assemblyInfo = Get-Content -Path RimTrans.Builder/Properties/AssemblyInfo.cs
             $versionLine = $assemblyInfo | Where-Object { $_ -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)' }
             if ($versionLine -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)') {
-              $version = "v$($matches[1]).$($matches[2]).$($matches[3]).$($matches[4])"
-              echo "Extracted version from AssemblyInfo.cs: $version"
+              $version = "$($matches[1]).$($matches[2]).$($matches[3]).$($matches[4])"
+              echo "Extracted version from AssemblyInfo.cs -> $version"
               echo "VERSION=$version" >> $env:GITHUB_ENV
             } else {
               throw "Could not extract version from AssemblyInfo.cs"
@@ -103,6 +104,7 @@ jobs:
           }
         env:
           TAG_NAME: ${{ github.event.inputs.tag_name }}
+      
       
       
       - name: Create framework-dependent zip
