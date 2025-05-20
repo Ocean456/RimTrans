@@ -3,6 +3,15 @@ name: Auto Build
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - 'RimTrans.Builder/**'
+      - 'RimTrans.Lite/**'
+      - 'RimTrans.TemplateExporter/**'
+      - 'RimTrans.Trans/**'
+      - 'duduluu.MVVM/**'
+      - '**/*.sln'
+      - '**/*.csproj'
+      - '.github/workflows/**'
   pull_request:
     branches: [ "master" ]
 

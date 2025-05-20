@@ -45,29 +45,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Install .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 8.0.x
-
-      - name: Setup MSBuild.exe
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.nuget/packages
-          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-nuget-
-
-      - name: Restore the application
-        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release /m
-
-      - name: Build the solution
-        run: msbuild $env:Solution_Name /t:Build /p:Configuration=Release /m
-
+          
       - name: Determine version
         id: version
         shell: pwsh
@@ -104,9 +82,29 @@ jobs:
           }
         env:
           TAG_NAME: ${{ github.event.inputs.tag_name }}
-      
-      
-      
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore the application
+        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release /m
+
+      - name: Build the solution
+        run: msbuild $env:Solution_Name /t:Build /p:Configuration=Release /m
+
       - name: Create framework-dependent zip
         run: |
           New-Item -ItemType Directory -Path temp/RimTrans
