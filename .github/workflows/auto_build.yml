@@ -1,0 +1,64 @@
+name: Auto Build
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: RimTrans.sln
+      Output_Dir: Output/Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore dependencies
+        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release /m
+
+      - name: Build solution (Release)
+        run: msbuild $env:Solution_Name /t:Build /p:Configuration=Release /m
+
+      - name: Run unit tests (Release)
+        run: dotnet test -c Release --no-build --verbosity normal
+
+      - name: Publish self-contained
+        run: dotnet publish RimTrans.sln -c Release -r win-x64 --self-contained true -o $env:Output_Dir/self-contained
+
+      - name: Create framework-dependent zip
+        run: |
+          New-Item -ItemType Directory -Path temp/RimTrans -Force
+          Copy-Item -Path $env:Output_Dir/net6.0-windows/* -Destination temp/RimTrans -Recurse
+          Compress-Archive -Path temp/RimTrans -DestinationPath "$env:Output_Dir/RimTrans-framework-dependent.zip"
+          Remove-Item temp -Recurse -Force
+
+      - name: Create self-contained zip
+        run: |
+          New-Item -ItemType Directory -Path temp/RimTrans -Force
+          Copy-Item -Path $env:Output_Dir/self-contained/* -Destination temp/RimTrans -Recurse
+          Compress-Archive -Path temp/RimTrans -DestinationPath "$env:Output_Dir/RimTrans-self-contained-win-x64.zip"
+          Remove-Item temp -Recurse -Force
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: RimTrans-Build-Release
+          path: |
+            ${{ env.Output_Dir }}/RimTrans-framework-dependent.zip
+            ${{ env.Output_Dir }}/RimTrans-self-contained-win-x64.zip
+          

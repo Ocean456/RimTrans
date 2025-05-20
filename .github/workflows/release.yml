@@ -1,0 +1,159 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      type:
+        description: "Release type"
+        required: true
+        type: choice
+        options:
+          - "Stable"
+          - "Edge"
+      draft:
+        description: "Draft release"
+        type: boolean
+        default: true
+      tag_name:
+        description: "Release tag (optional, defaults to AssemblyInfo.cs version with adjustments)"
+        required: false
+        default: ""
+      update_release:
+        description: '(Danger!) Allow updating non-draft stable release'
+        type: boolean
+        default: false
+      replace_name_during_update:
+          description: 'Override name if updating'
+          type: boolean
+          default: false
+      replace_body_during_update:
+          description: 'Override body if updating'
+          type: boolean
+          default: false
+
+permissions:
+  contents: write
+  packages: read
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    env:
+      Solution_Name: RimTrans.sln
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Setup MSBuild.exe
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+
+      - name: Restore the application
+        run: msbuild $env:Solution_Name /t:Restore /p:Configuration=Release /m
+
+      - name: Build the solution
+        run: msbuild $env:Solution_Name /t:Build /p:Configuration=Release /m
+
+      - name: Determine version
+        id: version
+        shell: pwsh
+        run: |
+          if ($env:TAG_NAME) {
+            # Get all tags sorted by version descending
+            $tags = git tag --sort=-v:refname
+            $previousTag = $tags | Where-Object { $_ -ne $env:TAG_NAME } | Select-Object -First 1
+
+            if ($previousTag -match '^v?(\d+)\.(\d+)\.(\d+)\.(\d+)$') {
+              $major = [int]$matches[1]
+              $minor = [int]$matches[2]
+              $build = [int]$matches[3]
+              $revision = [int]$matches[4] + 1
+              $newVersion = "v$major.$minor.$build.$revision"
+              echo "Detected previous tag: $previousTag"
+              echo "Bumping revision -> $newVersion"
+              echo "VERSION=$newVersion" >> $env:GITHUB_ENV
+            } else {
+              echo "Could not parse previous tag, using provided tag name as version"
+              echo "VERSION=$env:TAG_NAME" >> $env:GITHUB_ENV
+            }
+          } else {
+            $assemblyInfo = Get-Content -Path RimTrans.Builder/Properties/AssemblyInfo.cs
+            $versionLine = $assemblyInfo | Where-Object { $_ -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)' }
+            if ($versionLine -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)') {
+              $version = "v$($matches[1]).$($matches[2]).$($matches[3]).$($matches[4])"
+              echo "Extracted version from AssemblyInfo.cs: $version"
+              echo "VERSION=$version" >> $env:GITHUB_ENV
+            } else {
+              throw "Could not extract version from AssemblyInfo.cs"
+            }
+          }
+        env:
+          TAG_NAME: ${{ github.event.inputs.tag_name }}
+      
+      
+      - name: Create framework-dependent zip
+        run: |
+          New-Item -ItemType Directory -Path temp/RimTrans
+          Copy-Item -Path Output/Release/net6.0-windows/* -Destination temp/RimTrans -Recurse
+          Compress-Archive -Path temp/RimTrans -DestinationPath "Output/Release/RimTrans-${{ env.VERSION }}-framework-dependent.zip"
+          Remove-Item -Path temp -Recurse -Force
+
+      - name: Publish self-contained version
+        run: dotnet publish RimTrans.sln -c Release -r win-x64 --self-contained true -o Output/Release/self-contained
+
+      - name: Create self-contained zip
+        run: |
+          New-Item -ItemType Directory -Path temp/RimTrans
+          Copy-Item -Path Output/Release/self-contained/* -Destination temp/RimTrans -Recurse
+          Compress-Archive -Path temp/RimTrans -DestinationPath "Output/Release/RimTrans-${{ env.VERSION }}-self-contained-win-x64.zip"
+          Remove-Item -Path temp -Recurse -Force
+          
+      - name: Delete Previous Edge Release and Tag
+        if: ${{ github.event.inputs.type == 'Edge' }}
+        run: |
+          gh release delete Edge -y --cleanup-tag || echo "No previous release with tag Edge found"
+          git tag -d Edge || echo "Edge tag doesn't exist locally"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Release Body
+        id: body
+        run: |
+          echo "body<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ github.event.inputs.type }} release ${{ env.VERSION }}." >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo "Latest commit: ${{ github.sha }}" >> $GITHUB_OUTPUT
+          echo "Built by [this GitHub Actions run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})." >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.16.0
+        with:
+          artifacts: |
+            Output/Release/RimTrans-${{ env.VERSION }}-framework-dependent.zip
+            Output/Release/RimTrans-${{ env.VERSION }}-self-contained-win-x64.zip
+          tag: ${{ env.VERSION }}
+          name: ${{ github.event.inputs.type == 'Edge' && 'Edge' || env.VERSION }}
+          draft: ${{ github.event.inputs.draft }}
+          prerelease: ${{ github.event.inputs.type == 'Edge' }}
+          body: ${{ steps.body.outputs.body }}
+          allowUpdates: true
+          updateOnlyUnreleased: ${{ !github.event.inputs.update_release }}
+          omitNameDuringUpdate: ${{ !github.event.inputs.replace_name_during_update }}
+          omitBodyDuringUpdate: ${{ !github.event.inputs.replace_body_during_update }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
