@@ -8,9 +8,6 @@ using System.Xml;
 using System.Xml.Linq;
 using System.Reflection;
 
-using RimWorld;
-using Verse;
-
 using RimTrans.Builder;
 using RimTrans.Builder.Xml;
 using RimTrans.Builder.Crawler;
