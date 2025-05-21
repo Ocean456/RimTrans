@@ -1,15 +1,15 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimTrans.Lite", "RimTrans.Lite\RimTrans.Lite.csproj", "{87189362-ECA6-4A7F-8D78-1B7B86FC262A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimTrans.Lite", "RimTrans.Lite\RimTrans.Lite.csproj", "{87189362-ECA6-4A7F-8D78-1B7B86FC262A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimTrans.Builder", "RimTrans.Builder\RimTrans.Builder.csproj", "{8EE94102-F91F-4DF4-8304-51B6F1791464}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimTrans.Builder", "RimTrans.Builder\RimTrans.Builder.csproj", "{8EE94102-F91F-4DF4-8304-51B6F1791464}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "duduluu.MVVM", "duduluu.MVVM\duduluu.MVVM.csproj", "{F3EC6134-AC78-4919-BB82-5B37018BCEAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "duduluu.MVVM", "duduluu.MVVM\duduluu.MVVM.csproj", "{F3EC6134-AC78-4919-BB82-5B37018BCEAD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimTrans.Trans", "RimTrans.Trans\RimTrans.Trans.csproj", "{8CCCAC26-9DDF-4BAC-BEBB-2AD27C5C9429}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimTrans.Trans", "RimTrans.Trans\RimTrans.Trans.csproj", "{8CCCAC26-9DDF-4BAC-BEBB-2AD27C5C9429}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{9383465D-6633-4CF6-8BAD-E17D8F5C6F16}"
 	ProjectSection(SolutionItems) = preProject
@@ -17,9 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{93
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimTrans.Builder.Test", "RimTrans.Builder.Test\RimTrans.Builder.Test.csproj", "{FB6DE457-ABA5-4E73-BF37-4A815E49B691}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimTrans.Builder.Test", "RimTrans.Builder.Test\RimTrans.Builder.Test.csproj", "{FB6DE457-ABA5-4E73-BF37-4A815E49B691}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RimTrans.TemplateExporter", "RimTrans.TemplateExporter\RimTrans.TemplateExporter.csproj", "{4A841417-F517-4B5B-AF88-F29BC0A0095F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RimTrans.TemplateExporter", "RimTrans.TemplateExporter\RimTrans.TemplateExporter.csproj", "{4A841417-F517-4B5B-AF88-F29BC0A0095F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

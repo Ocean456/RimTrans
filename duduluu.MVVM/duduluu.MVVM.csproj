@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>duduluu.MVVM</RootNamespace>
     <AssemblyName>duduluu.MVVM</AssemblyName>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

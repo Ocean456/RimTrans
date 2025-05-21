@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>RimTrans.Builder</RootNamespace>
     <AssemblyName>RimTransBuilder</AssemblyName>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
