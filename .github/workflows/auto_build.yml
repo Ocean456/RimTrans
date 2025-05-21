@@ -89,9 +89,9 @@ jobs:
           $zip = "${{ env.Output_Dir }}/RimTrans-$type-win-x64.zip"
           New-Item -ItemType Directory -Path "$temp/RimTrans" | Out-Null
           Copy-Item "$source/*" -Destination "$temp/RimTrans" -Recurse
-          Compress-Archive -Path "$temp/RimTrans/*" -DestinationPath $zip -Update
+          Compress-Archive -Path "$temp/RimTrans" -DestinationPath $zip -Force
           Remove-Item $temp -Recurse -Force
-
+      
       - name: Upload ${{ matrix.publish_type }}
         uses: actions/upload-artifact@v4
         with:

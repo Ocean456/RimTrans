@@ -108,7 +108,7 @@ jobs:
       - name: Create framework-dependent zip
         run: |
           New-Item -ItemType Directory -Path temp/RimTrans
-          Copy-Item -Path Output/Release/net6.0-windows/* -Destination temp/RimTrans -Recurse
+          Copy-Item -Path Output/Release/net8.0-windows/* -Destination temp/RimTrans -Recurse
           Compress-Archive -Path temp/RimTrans -DestinationPath "Output/Release/RimTrans-${{ env.VERSION }}-framework-dependent.zip"
           Remove-Item -Path temp -Recurse -Force
 
