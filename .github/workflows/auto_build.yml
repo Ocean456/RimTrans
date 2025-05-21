@@ -1,0 +1,99 @@
+name: Auto Build
+
+on:
+  push:
+    branches: [ "master" ]
+    paths:
+      - 'RimTrans.Builder/**'
+      - 'RimTrans.Lite/**'
+      - 'RimTrans.TemplateExporter/**'
+      - 'RimTrans.Trans/**'
+      - 'duduluu.MVVM/**'
+      - '**/*.sln'
+      - '**/*.csproj'
+      - '.github/workflows/**'
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    env:
+      Solution_Name: RimTrans.sln
+      Output_Dir: Output/Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore dependencies
+        run: msbuild ${{ env.Solution_Name }} /t:Restore /p:Configuration=Release /m
+
+      - name: Build solution (Release)
+        run: msbuild ${{ env.Solution_Name }} /t:Build /p:Configuration=Release /m
+
+      - name: Run unit tests
+        run: dotnet test -c Release --no-build --verbosity normal
+
+  publish:
+    needs: build
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        publish_type: [framework-dependent, self-contained]
+
+    env:
+      Solution_Name: RimTrans.sln
+      Output_Dir: Output/Release
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+          cache: true
+          cache-dependency-path: '**/*.csproj'
+
+      - name: Publish ${{ matrix.publish_type }}
+        run: |
+          $type = "${{ matrix.publish_type }}"
+          $selfContained = if ($type -eq "self-contained") { "true" } else { "false" }
+          $dir = "${{ env.Output_Dir }}/$type"
+          dotnet publish ${{ env.Solution_Name }} `
+            -c Release `
+            -r win-x64 `
+            --self-contained:$selfContained `
+            -o $dir
+
+      - name: Zip ${{ matrix.publish_type }}
+        run: |
+          $type = "${{ matrix.publish_type }}"
+          $source = "${{ env.Output_Dir }}/$type"
+          $temp = "${{ env.Output_Dir }}/temp-$type"
+          $zip = "${{ env.Output_Dir }}/RimTrans-$type-win-x64.zip"
+          New-Item -ItemType Directory -Path "$temp/RimTrans" | Out-Null
+          Copy-Item "$source/*" -Destination "$temp/RimTrans" -Recurse
+          Compress-Archive -Path "$temp/RimTrans/*" -DestinationPath $zip -Update
+          Remove-Item $temp -Recurse -Force
+
+      - name: Upload ${{ matrix.publish_type }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: RimTrans-${{ matrix.publish_type }}-win-x64
+          path: ${{ env.Output_Dir }}/RimTrans-${{ matrix.publish_type }}-win-x64.zip

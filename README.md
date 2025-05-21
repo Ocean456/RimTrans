@@ -1,8 +1,11 @@
 # RimTrans
 
 <!-- orange, blue -->
-![TargetVersion)](https://img.shields.io/badge/RimWorld-0.18.1722-blue.svg?style=flat-square)
-![SupportLanguages](https://img.shields.io/badge/Support%20Languages-26-green.svg?style=flat-square)
+![rimtrans-version](https://img.shields.io/github/tag/ocean456/RimTrans.svg?label=version&style=flat-square&logo=github)
+![TargetVersion)](https://img.shields.io/badge/RimWorld-1.5.4409-blue.svg?style=flat-square)
+![Rimtrans-downloads](https://img.shields.io/github/downloads/ocean456/rimtrans/total?label=Downloads&style=flat-square)
+![license-mit](https://img.shields.io/github/license/Aironsoft/RimTrans.svg?style=flat-square&logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAQAAAD8x0bcAAAAsUlEQVR4AaXOgQbCUBSH8ZNKgWB7gMCMSCABEBGg0BsEwID0GmkIKBECWICAQA9QAioIKBM0GV+Xi1D3in78gY9z5C/4BPj2pMMT1Lq2KEKLzEmbC9rE9Msa2HAgYUFJ3sjRoIxLSMqRnnyiwgl4EHNnQEG+YYm2xxXFHu1wRDOeuxKr9cmYsjw1sjiMSdlSFTt8VqSMCLkxo2gOm5zRhmLGFG1ui+okoNYSGzwCPPndC3RGn6EAs8fYAAAAAElFTkSuQmCC)
+
 
 A translation and transform tool for RimWorld Core and Mods!
 
