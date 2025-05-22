@@ -124,6 +124,7 @@ jobs:
           
       - name: Delete Previous Edge Release and Tag
         if: ${{ github.event.inputs.type == 'Edge' }}
+        shell: bash
         run: |
           gh release delete Edge -y --cleanup-tag || echo "No previous release with tag Edge found"
           git tag -d Edge || echo "Edge tag doesn't exist locally"
