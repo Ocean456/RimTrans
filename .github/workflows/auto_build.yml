@@ -81,19 +81,16 @@ jobs:
             --self-contained:$selfContained `
             -o $dir
 
-      - name: Zip ${{ matrix.publish_type }}
+      - name: Prepare RimTrans folder
         run: |
           $type = "${{ matrix.publish_type }}"
           $source = "${{ env.Output_Dir }}/$type"
-          $temp = "${{ env.Output_Dir }}/temp-$type"
-          $zip = "${{ env.Output_Dir }}/RimTrans-$type-win-x64.zip"
-          New-Item -ItemType Directory -Path "$temp/RimTrans" | Out-Null
-          Copy-Item "$source/*" -Destination "$temp/RimTrans" -Recurse
-          Compress-Archive -Path "$temp/RimTrans" -DestinationPath $zip -Force
-          Remove-Item $temp -Recurse -Force
-      
+          $rimtrans = "${{ env.Output_Dir }}/rimtrans-$type"
+          New-Item -ItemType Directory -Path "$rimtrans/RimTrans" | Out-Null
+          Copy-Item "$source/*" -Destination "$rimtrans/RimTrans" -Recurse
+
       - name: Upload ${{ matrix.publish_type }}
         uses: actions/upload-artifact@v4
         with:
           name: RimTrans-${{ matrix.publish_type }}-win-x64
-          path: ${{ env.Output_Dir }}/RimTrans-${{ matrix.publish_type }}-win-x64.zip
+          path: ${{ env.Output_Dir }}/rimtrans-${{ matrix.publish_type }}
