@@ -50,26 +50,26 @@ jobs:
         id: version
         shell: pwsh
         run: |
+          echo "Using provided tag name: $env:TAG_NAME"
+          $tags = git tag --sort=-v:refname
+          $latestTag = $tags | Where-Object { $_ -ne $env:TAG_NAME } | Select-Object -First 1
+          
           if ($env:TAG_NAME) {
-            # Get all tags sorted by version descending
+            echo "Using provided tag name: $env:TAG_NAME"
+            $version = $env:TAG_NAME.TrimStart('v')
             $tags = git tag --sort=-v:refname
-            $previousTag = $tags | Where-Object { $_ -ne $env:TAG_NAME } | Select-Object -First 1
-
-            if ($previousTag -match '^v?(\d+)\.(\d+)\.(\d+)\.(\d+)$') {
+          }
+          elseif ($latestTag -and $latestTag -match '^(\d+)\.(\d+)\.(\d+)\.(\d+)$') {
+              echo "Detected previous tag: $latestTag"
               $major    = [int]$matches[1]
               $minor    = [int]$matches[2]
               $build    = [int]$matches[3]
               $revision = [int]$matches[4] + 1
               $newVersion = "$major.$minor.$build.$revision"
-              echo "Detected previous tag: $previousTag"
               echo "Bumping revision -> $newVersion"
               echo "VERSION=$newVersion" >> $env:GITHUB_ENV
-            } else {
-              echo "Could not parse previous tag, using provided tag name as version"
-              $clean = $env:TAG_NAME.TrimStart('v')
-              echo "VERSION=$clean" >> $env:GITHUB_ENV
-            }
           } else {
+            echo "No latest tag found, using AssemblyInfo.cs version"
             $assemblyInfo = Get-Content -Path RimTrans.Builder/Properties/AssemblyInfo.cs
             $versionLine = $assemblyInfo | Where-Object { $_ -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)' }
             if ($versionLine -match 'AssemblyVersion\("(\d+)\.(\d+)\.(\d+)\.(\d+)"\)') {
