@@ -84,7 +84,7 @@ jobs:
           TAG_NAME: ${{ github.event.inputs.tag_name }}
 
       - name: Install .NET Core
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: 8.0.x
 
